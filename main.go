@@ -1,15 +1,33 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"flag"
+	// "path/filepath"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/golang/glog"
+	"github.com/hyperjiang/gin-skeleton/config"
+	"github.com/hyperjiang/gin-skeleton/router"
+)
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
 
-		c.JSON(200, gin.H{
-			"message": "token.AccessToken",
-			"test":    "user",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	addr := flag.String("addr", config.Server.Addr, "Address to listen and serve")
+	flag.Parse()
+
+	if config.Server.Mode == gin.ReleaseMode {
+		gin.DisableConsoleColor()
+	}
+
+	app := gin.Default()
+
+	// app.Static("/images", filepath.Join(config.Server.StaticDir, "img"))
+	// app.StaticFile("/favicon.ico", filepath.Join(config.Server.StaticDir, "img/favicon.ico"))
+	// app.LoadHTMLGlob(config.Server.ViewDir + "/*")
+	// app.MaxMultipartMemory = config.Server.MaxMultipartMemory << 20
+
+	router.Route(app)
+
+	// Listen and Serve
+	app.Run(*addr)
 }

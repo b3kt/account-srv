@@ -32,11 +32,11 @@ type ServerConfig struct {
 
 // KeycloakAdminConfig keycloak admin config
 type KeycloakAdminConfig struct {
-	BaseURL  	string `yaml:"base_url"`
-	AdminRealm  string `yaml:"adminRealm"`
-	Realm    	string `yaml:"realm"`
-	Username 	string `yaml:"username"`
-	Password 	string `yaml:"password"`
+	BaseURL    string `yaml:"base_url"`
+	AdminRealm string `yaml:"adminRealm"`
+	Realm      string `yaml:"realm"`
+	Username   string `yaml:"username"`
+	Password   string `yaml:"password"`
 }
 
 // global configs

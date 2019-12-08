@@ -4,9 +4,9 @@ import (
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 
-	"../controller"
-	"../middleware"
-	"../model"
+	"github.com/b3kt/account-srv/controller"
+	"github.com/b3kt/account-srv/middleware"
+	"github.com/b3kt/account-srv/model"
 )
 
 // Route makes the routing
