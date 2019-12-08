@@ -6,7 +6,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	
+
 	"github.com/b3kt/account-srv/model"
 )
 
@@ -15,8 +15,8 @@ var identityKey = "email"
 
 // Login struct
 type Login struct {
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required,min=6,max=20"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 // Auth middleware
@@ -37,7 +37,7 @@ func init() {
 			if v, ok := data.(*model.User); ok {
 				return jwt.MapClaims{
 					identityKey: v.Email,
-					"name":      v.Name,
+					"name":      v.Username,
 				}
 			}
 			return jwt.MapClaims{}
@@ -45,22 +45,22 @@ func init() {
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &model.User{
-				Email: claims[identityKey].(string),
-				Name:  claims["name"].(string),
+				Email:    claims[identityKey].(string),
+				Username: claims["name"].(string),
 			}
 		},
-		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var loginVals Login
-			if err := c.ShouldBind(&loginVals); err != nil {
-				return "", jwt.ErrMissingLoginValues
-			}
-			email := loginVals.Email
-			password := loginVals.Password
+		// Authenticator: func(c *gin.Context) (interface{}, error) {
+		// 	var loginVals Login
+		// 	if err := c.BindJSON(&loginVals); err != nil {
+		// 		return "", jwt.ErrMissingLoginValues
+		// 	}
+		// 	email := loginVals.Email
+		// 	password := loginVals.Password
 
-			return model.LoginByEmailAndPassword(email, password)
-		},
+		// 	return model.LoginByEmailAndPassword(email, password)
+		// },
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*model.User); ok && v.Name == "admin" {
+			if v, ok := data.(*model.User); ok && v.Username == "admin" {
 				return true
 			}
 

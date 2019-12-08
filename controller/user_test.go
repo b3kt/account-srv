@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	config "github.com/b3kt/account-srv/config"
+	"github.com/b3kt/account-srv/config"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
 )
@@ -32,23 +32,13 @@ func (suite *UserTestSuite) SetupTest() {
 
 	suite.rec = httptest.NewRecorder()
 	suite.context, suite.app = gin.CreateTestContext(suite.rec)
-	suite.app.LoadHTMLGlob("../view/*")
+	// suite.app.LoadHTMLGlob("../view/*")
 	suite.ctrl = new(UserController)
 }
 
 func (suite *UserTestSuite) TestGetUser() {
 	suite.context.Params = gin.Params{gin.Param{Key: "id", Value: "1"}}
 	suite.ctrl.GetUser(suite.context)
-	suite.Equal(200, suite.rec.Code)
-}
-
-func (suite *UserTestSuite) TestSignupForm() {
-	suite.ctrl.SignupForm(suite.context)
-	suite.Equal(200, suite.rec.Code)
-}
-
-func (suite *UserTestSuite) TestLoginForm() {
-	suite.ctrl.LoginForm(suite.context)
 	suite.Equal(200, suite.rec.Code)
 }
 

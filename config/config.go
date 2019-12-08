@@ -10,7 +10,7 @@ import (
 )
 
 // ConfigFile is the default config file
-var ConfigFile = "./config.yml"
+var ConfigFile = "/home/bekt/go/src/github.com/b3kt/account-srv/config.yml"
 
 // GlobalConfig is the global config
 type GlobalConfig struct {
@@ -32,11 +32,13 @@ type ServerConfig struct {
 
 // KeycloakAdminConfig keycloak admin config
 type KeycloakAdminConfig struct {
-	BaseURL    string `yaml:"base_url"`
-	AdminRealm string `yaml:"adminRealm"`
-	Realm      string `yaml:"realm"`
-	Username   string `yaml:"username"`
-	Password   string `yaml:"password"`
+	BaseURL      string `yaml:"base_url"`
+	AdminRealm   string `yaml:"admin_realm"`
+	Realm        string `yaml:"realm"`
+	Username     string `yaml:"username"`
+	Password     string `yaml:"password"`
+	ClientID     string `yaml:"client_id"`
+	ClientSecret string `yaml:"client_secret"`
 }
 
 // global configs

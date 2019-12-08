@@ -1,10 +1,12 @@
 package model
 
 import (
-	"github.com/Nerzal/gocloak/v3"
+	"log"
 	"time"
 
-	"../config"
+	"github.com/Nerzal/gocloak/v3"
+
+	"github.com/b3kt/account-srv/config"
 )
 
 // User the user model
@@ -17,11 +19,6 @@ type User struct {
 	Password  string    `json:"-"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-}
-
-// TableName for gorm
-func (User) TableName() string {
-	return "users"
 }
 
 // GetFirstByID gets the user by his ID
@@ -37,52 +34,80 @@ func (u *User) GetFirstByID(id string) error {
 	return nil
 }
 
-// GetFirstByEmail gets the user by his email
-func (u *User) GetFirstByEmail(email string) error {
-	// db := DB().Where("email=?", email).First(u)
+// CheckUserByEmailAndUsername gets the user by his email
+func (u *User) CheckUserByEmailAndUsername(email string, username string) error {
 
-	// if db.RecordNotFound() {
-	// 	return ErrDataNotFound
-	// } else if db.Error != nil {
-	// 	return db.Error
-	// }
+	client := gocloak.NewClient(config.KeycloakAdmin.BaseURL)
+	accessToken, err := client.LoginAdmin(config.KeycloakAdmin.Username, config.KeycloakAdmin.Password, config.KeycloakAdmin.AdminRealm)
+	if err != nil {
+		panic("Something wrong with the credentials or url")
+	}
+
+	users, err := client.GetUsers(accessToken.AccessToken, config.KeycloakAdmin.Realm, gocloak.GetUsersParams{
+		Email: email,
+	})
+	if err != nil {
+		return err
+	}
+
+	users, err = client.GetUsers(accessToken.AccessToken, config.KeycloakAdmin.Realm, gocloak.GetUsersParams{
+		Username: username,
+	})
+	if err != nil {
+		return err
+	}
+
+	if users != nil {
+		for i := range users {
+			if users[i].Email == email {
+				log.Println("Email already used already exists", users[i].Email)
+				return ErrUserExists
+			}
+			if users[i].Username == username {
+				log.Println("Username already used already exists", users[i].Email)
+				return ErrUserExists
+			}
+		}
+	}
 
 	return nil
 }
 
-// Create a new user
-func (u *User) Create() error {
-	// db := DB().Create(u)
+// GetUserByEmail gets the user by his email
+func (u *User) GetUserByEmail(email string) error {
 
-	// if db.Error != nil {
-	// 	return db.Error
-	// } else if db.RowsAffected == 0 {
-	// 	return ErrKeyConflict
-	// }
+	client := gocloak.NewClient(config.KeycloakAdmin.BaseURL)
+	accessToken, err := client.LoginAdmin(config.KeycloakAdmin.Username, config.KeycloakAdmin.Password, config.KeycloakAdmin.AdminRealm)
+	if err != nil {
+		panic("Something wrong with the credentials or url")
+	}
+
+	users, err := client.GetUsers(accessToken.AccessToken, config.KeycloakAdmin.Realm, gocloak.GetUsersParams{
+		Email: u.Email,
+	})
+	if err != nil {
+		return err
+	}
+	if users != nil {
+		for i := range users {
+			if users[i].Email == email {
+				log.Println("Email already used", users[i].Email)
+				return ErrUserExists
+			}
+		}
+	}
 
 	return nil
 }
 
 // Signup a new user
 func (u *User) Signup() error {
-	// var user User
-	// err := user.GetFirstByEmail(u.Email)
+	var existinguser User
+	err := existinguser.CheckUserByEmailAndUsername(u.Email, u.Username)
+	if err != nil {
+		return err
+	}
 
-	// if err == nil {
-	// 	return ErrUserExists
-	// } else if err != ErrDataNotFound {
-	// 	return err
-	// }
-
-	// hash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// // replace the plaintext password with ciphertext password
-	// u.Password = string(hash)
-
-	// Keycloak
 	client := gocloak.NewClient(config.KeycloakAdmin.BaseURL)
 	token, err := client.LoginAdmin(config.KeycloakAdmin.Username, config.KeycloakAdmin.Password, config.KeycloakAdmin.AdminRealm)
 	if err != nil {
@@ -101,25 +126,15 @@ func (u *User) Signup() error {
 		panic("Oh no!, failed to create user :(")
 	}
 
-	return u.Create()
-}
-
-// Login a user
-func (u *User) Login(password string) error {
-	// err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
-	// if err != nil {
-	// 	return err
-	// }
 	return nil
 }
 
-// LoginByEmailAndPassword login a user by his email and password
-func LoginByEmailAndPassword(email, password string) (*User, error) {
-	var user User
-	err := user.GetFirstByEmail(email)
-	if err != nil {
-		return &user, err
-	}
+// Login a user
+func (u *User) Login() (*gocloak.JWT, error) {
+	client := gocloak.NewClient(config.KeycloakAdmin.BaseURL)
 
-	return &user, user.Login(password)
+	log.Println("dhasgfdhagfsdhgafshgd", u)
+	return client.Login(config.KeycloakAdmin.ClientID, config.KeycloakAdmin.ClientSecret, config.KeycloakAdmin.Realm,
+		u.Username, u.Password)
+
 }

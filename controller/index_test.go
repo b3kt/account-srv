@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/b3kt/account-srv/config"
-	"github.com/kt/ag/cnc/finig"
 	"github.com/hyperjiang/php"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,7 +24,7 @@ func (suite *IndexTestSuite) SetupTest() {
 
 	suite.rec = httptest.NewRecorder()
 	suite.context, suite.app = gin.CreateTestContext(suite.rec)
-	suite.app.LoadHTMLGlob("../view/*")
+	// suite.app.LoadHTMLGlob("../view/*")
 	suite.ctrl = new(IndexController)
 }
 

@@ -26,7 +26,7 @@ func Route(app *gin.Engine) {
 			user, _ := c.Get("email")
 			c.JSON(200, gin.H{
 				"email": claims["email"],
-				"name":  user.(*model.User).Name,
+				"name":  user.(*model.User).Username,
 				"text":  "Hello World.",
 			})
 		})
@@ -35,14 +35,14 @@ func Route(app *gin.Engine) {
 	userController := new(controller.UserController)
 	app.GET(
 		"/user/:id", userController.GetUser,
-	).GET(
-		"/signup", userController.SignupForm,
-	).POST(
+	)
+
+	app.POST(
 		"/signup", userController.Signup,
-	).GET(
-		"/login", userController.LoginForm,
-	).POST(
-		"/login", authMiddleware.LoginHandler,
+	)
+
+	app.POST(
+		"/login", userController.Signin,
 	)
 
 	api := app.Group("/api")

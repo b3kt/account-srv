@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/golang/glog"
-	"github.com/hyperjiang/gin-skeleton/config"
-	"github.com/hyperjiang/gin-skeleton/router"
+	"github.com/b3kt/account-srv/config"
+	"github.com/b3kt/account-srv/router"
 )
 
 func main() {
