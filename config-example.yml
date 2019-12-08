@@ -18,7 +18,7 @@ server:
 
 keycloak:
   base_url: https://lt-keycloak.herokuapp.com
-	adminRealm: master
-	realm: anjrtz
-	username: b3kt
-	password: 3mmp4t0kt0b3r
+    adminRealm: master
+    realm: demo
+    username: admin
+    password: password
