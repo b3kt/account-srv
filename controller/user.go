@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
+	model "github.com/b3kt/account-srv/model"
 	"github.com/gin-gonic/gin"
-	"../model"
 )
 
 // UserController is the user controller

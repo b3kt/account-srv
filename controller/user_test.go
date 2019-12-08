@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	config "github.com/b3kt/account-srv/config"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
-	"../config"
 )
 
 type UserTestSuite struct {

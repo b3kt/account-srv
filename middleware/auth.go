@@ -7,7 +7,7 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	
-	"../model"
+	"github.com/b3kt/account-srv/model"
 )
 
 var authMiddleware *jwt.GinJWTMiddleware
