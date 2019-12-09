@@ -1,7 +1,7 @@
 package vo
 
 import (
-	"time"
+	"github.com/Nerzal/gocloak/v3"
 )
 
 // SigninRequestMsg - request format for signup
@@ -13,10 +13,9 @@ type SigninRequestMsg struct {
 
 // SigninResponseMsg - response format
 type SigninResponseMsg struct {
-	Message     string    `json:"message"`
-	ErrorCode   string    `json:"error_code"`
-	StatusCode  int       `json:"status_code"`
-	Timestamp   time.Time `json:"timestamp"`
-	AccessToken string    `json:"token"`
-	Username    string    `json:"username"`
+	AccessToken *gocloak.JWT `json:"jwt"`
+	Header      ResultMsg    `json:"header"`
+	Body        struct {
+		Username string `json:"username"`
+	} `json:"body"`
 }

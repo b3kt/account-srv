@@ -33,17 +33,11 @@ func Route(app *gin.Engine) {
 	}
 
 	userController := new(controller.UserController)
-	app.GET(
-		"/user/:id", userController.GetUser,
-	)
-
-	app.POST(
-		"/signup", userController.Signup,
-	)
-
-	app.POST(
-		"/login", userController.Signin,
-	)
+	app.GET("/user/:id", userController.GetUser)
+	app.POST("/signup", userController.Signup)
+	app.POST("/login", userController.Signin)
+	app.POST("/recovery", userController.Recovery)
+	app.POST("/resetpass", userController.ResetPass)
 
 	api := app.Group("/api")
 	{

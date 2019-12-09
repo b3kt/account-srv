@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/Nerzal/gocloak/v3"
-
 	"github.com/b3kt/account-srv/config"
 )
 
@@ -41,20 +40,23 @@ func (u *User) CheckUserByEmailAndUsername(email string, username string) error 
 	accessToken, err := client.LoginAdmin(config.KeycloakAdmin.Username, config.KeycloakAdmin.Password, config.KeycloakAdmin.AdminRealm)
 	if err != nil {
 		panic("Something wrong with the credentials or url")
+		return ErrSystemConfigurationFailure
 	}
 
 	users, err := client.GetUsers(accessToken.AccessToken, config.KeycloakAdmin.Realm, gocloak.GetUsersParams{
 		Email: email,
 	})
 	if err != nil {
-		return err
+		log.Println("Failed while fetch user by username", username)
+		return ErrSystemIntegrationFailure
 	}
 
 	users, err = client.GetUsers(accessToken.AccessToken, config.KeycloakAdmin.Realm, gocloak.GetUsersParams{
 		Username: username,
 	})
 	if err != nil {
-		return err
+		log.Println("Failed while fetch user by username", username)
+		return ErrSystemIntegrationFailure
 	}
 
 	if users != nil {
@@ -74,7 +76,7 @@ func (u *User) CheckUserByEmailAndUsername(email string, username string) error 
 }
 
 // GetUserByEmail gets the user by his email
-func (u *User) GetUserByEmail(email string) error {
+func (u *User) GetUserByEmail(email string) (*User, error) {
 
 	client := gocloak.NewClient(config.KeycloakAdmin.BaseURL)
 	accessToken, err := client.LoginAdmin(config.KeycloakAdmin.Username, config.KeycloakAdmin.Password, config.KeycloakAdmin.AdminRealm)
@@ -86,18 +88,18 @@ func (u *User) GetUserByEmail(email string) error {
 		Email: u.Email,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if users != nil {
 		for i := range users {
 			if users[i].Email == email {
 				log.Println("Email already used", users[i].Email)
-				return ErrUserExists
+				return nil, ErrUserExists
 			}
 		}
 	}
 
-	return nil
+	return nil, nil
 }
 
 // Signup a new user
@@ -105,6 +107,7 @@ func (u *User) Signup() error {
 	var existinguser User
 	err := existinguser.CheckUserByEmailAndUsername(u.Email, u.Username)
 	if err != nil {
+		log.Println("Failed while signup", err.Error())
 		return err
 	}
 
@@ -133,7 +136,7 @@ func (u *User) Signup() error {
 func (u *User) Login() (*gocloak.JWT, error) {
 	client := gocloak.NewClient(config.KeycloakAdmin.BaseURL)
 
-	log.Println("dhasgfdhagfsdhgafshgd", u)
+	log.Println("Login process begin")
 	return client.Login(config.KeycloakAdmin.ClientID, config.KeycloakAdmin.ClientSecret, config.KeycloakAdmin.Realm,
 		u.Username, u.Password)
 
