@@ -6,6 +6,7 @@ require (
 	github.com/Nerzal/gocloak/v3 v3.9.0
 	github.com/appleboy/gin-jwt v2.5.0+incompatible
 	github.com/appleboy/gin-jwt/v2 v2.6.2
+	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-redis/redis v6.14.2+incompatible
 	github.com/go-redis/redis/v7 v7.0.0-beta.4

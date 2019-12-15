@@ -4,10 +4,11 @@ import (
 	"flag"
 	// "path/filepath"
 
-	"github.com/gin-gonic/gin"
-	_ "github.com/golang/glog"
 	"github.com/b3kt/account-srv/config"
 	"github.com/b3kt/account-srv/router"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	_ "github.com/golang/glog"
 )
 
 func main() {
@@ -27,6 +28,8 @@ func main() {
 	// app.MaxMultipartMemory = config.Server.MaxMultipartMemory << 20
 
 	router.Route(app)
+
+	app.Use(cors.Default())
 
 	// Listen and Serve
 	app.Run(*addr)

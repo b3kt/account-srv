@@ -67,9 +67,6 @@ func (ctrl *UserController) Signup(c *gin.Context) {
 			response.Header.Timestamp = time.Now()
 			c.JSON(http.StatusOK, response)
 		} else {
-
-			// set password
-
 			log.Println("Signup completed")
 			response.Header.Message = "Signup completed"
 			response.Header.Error = false

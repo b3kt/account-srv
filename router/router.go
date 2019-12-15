@@ -9,14 +9,17 @@ import (
 	"github.com/b3kt/account-srv/model"
 )
 
+const prefix = "/api/v1"
+
 // Route makes the routing
 func Route(app *gin.Engine) {
+
 	indexController := new(controller.IndexController)
 	app.GET(
 		"/", indexController.GetIndex,
 	)
 
-	auth := app.Group("/auth")
+	auth := app.Group(prefix + "/auth")
 	authMiddleware := middleware.Auth()
 	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 	auth.Use(authMiddleware.MiddlewareFunc())
@@ -33,13 +36,13 @@ func Route(app *gin.Engine) {
 	}
 
 	userController := new(controller.UserController)
-	app.GET("/user/:id", userController.GetUser)
-	app.POST("/signup", userController.Signup)
-	app.POST("/login", userController.Signin)
-	app.POST("/recovery", userController.Recovery)
-	app.POST("/resetpass", userController.ResetPass)
+	app.GET(prefix+"/user/:id", userController.GetUser)
+	app.POST(prefix+"/auth/register", userController.Signup)
+	app.POST(prefix+"/auth/login", userController.Signin)
+	app.POST(prefix+"/recovery", userController.Recovery)
+	app.POST(prefix+"/resetpass", userController.ResetPass)
 
-	api := app.Group("/api")
+	api := app.Group(prefix + "/api")
 	{
 		api.GET("/version", indexController.GetVersion)
 	}
